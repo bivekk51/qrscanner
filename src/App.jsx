@@ -3,7 +3,7 @@ import QrScanner from 'react-qr-scanner';
 
 function App() {
   const [scannedData, setScannedData] = useState('');
-  const [facingMode, setFacingMode] = useState('rear'); // Default to back camera
+  const [facingMode, setFacingMode] = useState('front'); // Default to back camera
 
   const handleScan = (data) => {
     if (data) {
@@ -30,7 +30,7 @@ function App() {
               onError={handleError}
               onScan={handleScan}
               style={{ width: '100%', height: '100%' }}
-              facingMode={facingMode} // Set camera facing mode
+              facingMode="rear" // Set camera facing mode
             />
           </div>
           <p className="mt-4 text-center text-gray-700">Scanned URL: {scannedData}</p>
