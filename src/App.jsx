@@ -1,43 +1,45 @@
 import { useState } from 'react';
-import QrScanner from 'react-qr-scanner';
+import { QrReader } from 'react-qr-reader'; // Import from react-qr-reader
 
 function App() {
   const [scannedData, setScannedData] = useState('');
-  const [isFrontCamera, setIsFrontCamera] = useState(true);
+  const [facingMode, setFacingMode] = useState('environment'); // Default to back camera
 
-  const handleScan = (data) => {
-    if (data) {
-      setScannedData(data);
+  const handleScan = (result, error) => {
+    if (result) {
+      setScannedData(result?.text || result); // Extract text from result
+    }
+    if (error) {
+      console.error(error);
     }
   };
 
-  const handleError = (err) => {
-    console.error(err);
-  };
-
-  const toggleCamera = () => {
-    setIsFrontCamera((prev) => !prev);
+  // Toggle between front and back camera
+  const toggleFacingMode = () => {
+    setFacingMode((prevMode) => (prevMode === 'environment' ? 'user' : 'environment'));
   };
 
   return (
-    <>
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-        <QrScanner
-          delay={300}
-          onError={handleError}
-          onScan={handleScan}
-          facingMode={isFrontCamera ? 'user' : 'environment'} // Switch camera mode
-          style={{ width: '100%', maxWidth: '400px', border: '2px solid #000' }} // Add some styling
-        />
-        <p className="mt-4 text-lg font-semibold">Scanned URL: {scannedData}</p>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-md p-4 bg-white rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold text-center mb-4">QR Code Scanner</h1>
+        <div className="relative border-4 border-dashed border-gray-300 rounded-lg overflow-hidden aspect-square">
+          <QrReader
+            delay={300}
+            onResult={handleScan} // This method handles scanning and errors
+            constraints={{ facingMode }} // Camera facingMode (front or back)
+            style={{ width: '100%' }}
+          />
+        </div>
+        <p className="mt-4 text-center text-gray-700">Scanned URL: {scannedData}</p>
         <button
-          onClick={toggleCamera}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+          onClick={toggleFacingMode}
         >
           Switch Camera
         </button>
       </div>
-    </>
+    </div>
   );
 }
 
